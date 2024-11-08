@@ -1,0 +1,35 @@
+services:
+  smartshopper_flask:
+    container_name: smartshopper_flask
+    build:
+      context: ./back-end
+      dockerfile: Dockerfile
+    ports:
+      - 5000:5000
+    volumes:
+      - ./back-end/api:/api
+    stdin_open: true
+    tty: true
+    networks:
+      smartshopper_network:
+
+  smartshopper_nextjs:
+    container_name: smartshopper_nextjs
+    build:
+      context: ./front-end
+      dockerfile: Dockerfile
+    ports:
+        - 3000:3000
+    volumes:
+        - ./front-end/app:/app
+    stdin_open: true
+    tty: true
+    depends_on:
+      - smartshopper_flask
+    networks:
+      smartshopper_network:
+
+networks:
+  smartshopper_network:
+    name: smartshopper_network
+    driver: bridge
