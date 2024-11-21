@@ -2,7 +2,7 @@
 
 export async function LoginAction(email: string, password: string) {
     try {
-        const response = await fetch("http://smartshopper_flask:5000/login", {
+        const response = await fetch("http://smartshopper-gateway:5000/login", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",

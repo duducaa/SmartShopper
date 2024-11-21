@@ -1,35 +1,165 @@
 services:
-  smartshopper_flask:
-    container_name: smartshopper_flask
+  mercado-livre-web-scraping:
+    container_name: smartshopper-mercado-livre
     build:
-      context: ./back-end
+      context: ./web-scraping/mercado-livre
       dockerfile: Dockerfile
     ports:
-      - 5000:5000
+      - 5090:5000
     volumes:
-      - ./back-end/api:/api
+      - ./web-scraping/mercado-livre/api:/api
     stdin_open: true
     tty: true
     networks:
-      smartshopper_network:
+      smartshopper-network:
+        ipv4_address: 172.168.200.9
 
-  smartshopper_nextjs:
-    container_name: smartshopper_nextjs
+  terabyte-web-scraping:
+    container_name: smartshopper-terabyte
+    build:
+      context: ./web-scraping/terabyte
+      dockerfile: Dockerfile
+    ports:
+      - 5080:5000
+    volumes:
+      - ./web-scraping/terabyte/api:/api
+    stdin_open: true
+    tty: true
+    networks:
+      smartshopper-network:
+        ipv4_address: 172.168.200.8
+
+  kabum-web-scraping:
+    container_name: smartshopper-kabum
+    build:
+      context: ./web-scraping/kabum
+      dockerfile: Dockerfile
+    ports:
+      - 5070:5000
+    volumes:
+      - ./web-scraping/kabum/api:/api
+    stdin_open: true
+    tty: true
+    networks:
+      smartshopper-network:
+        ipv4_address: 172.168.200.7
+
+  web-scraping-gateway:
+    container_name: smartshopper-scraping-gateway
+    build:
+      context: ./gateway
+      dockerfile: Dockerfile
+      args:
+        GATEWAY: "web-scraping"
+    ports:
+      - 5060:5000
+    volumes:
+      - ./gateway/web-scraping:/api
+    stdin_open: true
+    tty: true
+    networks:
+      smartshopper-network:
+        ipv4_address: 172.168.200.6
+    depends_on:
+      - kabum-web-scraping
+      - mercado-livre-web-scraping
+      - terabyte-web-scraping
+
+  smartshopper-database:
+    container_name: smartshopper-smartshopper-database
+    image: mysql:8.4
+    environment:
+      MYSQL_ROOT_PASSWORD: "Password-1"
+      MYSQL_USER: "smartshopper"
+      MYSQL_PASSWORD: "Password-1"
+      MYSQL_DATABASE: "smartshopper_db"
+    ports:
+      - 5050:5000
+    stdin_open: true
+    tty: true
+    networks:
+      smartshopper-network:
+        ipv4_address: 172.168.200.5
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+  user-actions:
+    container_name: user-actions
+    build:
+      context: ./user-actions
+      dockerfile: Dockerfile
+    ports:
+      - 5100:5000
+    volumes:
+      - ./user-actions:/api
+    stdin_open: true
+    tty: true
+    networks:
+      smartshopper-network:
+        ipv4_address: 172.168.200.10
+
+  login:
+    container_name: smartshopper-login
+    build:
+      context: ./login
+      dockerfile: Dockerfile
+    ports:
+      - 5040:5000
+    volumes:
+      - ./login/api:/api
+    stdin_open: true
+    tty: true
+    networks:
+      smartshopper-network:
+        ipv4_address: 172.168.200.4
+    
+  gateway:
+    container_name: smartshopper-gateway
+    build:
+      context: ./gateway
+      dockerfile: Dockerfile
+      args:
+        GATEWAY: "main"
+    ports:
+      - 5030:5000
+    volumes:
+      - ./gateway/main:/api
+    stdin_open: true
+    tty: true
+    networks:
+      smartshopper-network:
+        ipv4_address: 172.168.200.3
+    depends_on:
+      - login
+      - web-scraping-gateway
+      - smartshopper-database
+      - user-actions
+  
+  interface:
+    container_name: smartshopper-interface
     build:
       context: ./front-end
       dockerfile: Dockerfile
     ports:
-        - 3000:3000
+        - 5020:3000
     volumes:
         - ./front-end/app:/app
     stdin_open: true
     tty: true
     depends_on:
-      - smartshopper_flask
+      - gateway
     networks:
-      smartshopper_network:
+      smartshopper-network:
+        ipv4_address: 172.168.200.2
 
 networks:
-  smartshopper_network:
-    name: smartshopper_network
+  smartshopper-network:
+    name: smartshopper-network
     driver: bridge
+    ipam:
+      config:
+        - subnet: 172.168.200.0/27
+
+volumes:
+  mysql_data:
+    driver: local
