@@ -1,11 +1,11 @@
-from base import Base
 from peewee import *
+from base import BaseModel
 
-class Products(Base):
-    id = IntegerField(primary_key=True, db_column="product_id")
+class Products(BaseModel):
+    id = IntegerField(db_column="product_id", primary_key=True)
     name = TextField(db_column="product_name")
     target_price = DoubleField()
-    user = ForeignKeyField()
+    user_id = IntegerField()
     
     class Meta:
         table_name = "users_products"

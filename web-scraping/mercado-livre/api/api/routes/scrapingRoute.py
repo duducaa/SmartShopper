@@ -8,21 +8,9 @@ sys.path.append(os.path.abspath(os.path.join(os.getcwd(), 'data')))
 from flask import request, Blueprint
 from flask_cors import cross_origin
 
-# from selenium import webdriver
-# from webdriver_manager.chrome import ChromeDriverManager
-# from selenium.webdriver.chrome.service import Service
-# from selenium.webdriver.chrome.options import Options
-
 from bs4 import BeautifulSoup
 import json
 import requests
-
-# options = Options()
-# options.add_argument("--no-sandbox")
-# options.add_argument("--headless")
-# options.add_argument('--disable-dev-shm-usage')
-# options.add_argument("user-agent=smartshopper")
-# driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
 
 headers = {
     "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36",
@@ -33,7 +21,8 @@ headers = {
 def scraping(products):
     
     prices = {}
-    for product_name in products:         
+    for product in products:
+        product_name = product["name"]      
         response = requests.get(f"https://lista.mercadolivre.com.br/{product_name}", headers=headers)
         soup = BeautifulSoup(response.content, "html.parser")
         
@@ -46,8 +35,13 @@ def scraping(products):
         price_cents = priceDiv.find("span", class_="andes-money-amount__cents") or 0
         price = price_fraction.text + ("." + price_cents.text if type(price_cents) == "str" else "")
         prices[product_name] = float(price)
-    
-    # driver.quit()
+        
+        data = [{
+            "product_id": product["id"],
+            "store_id": 3,
+            "price": float(price)
+        }]
+        requests.post("http://history-register:5000/", json=data)
     
     return prices
 

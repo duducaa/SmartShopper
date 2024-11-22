@@ -18,6 +18,7 @@ export default function Home() {
   const login = async (e: { preventDefault: () => void; }) => {
     e.preventDefault();
     const result = await LoginAction(email, password);
+    console.log(result.key)
     if (result.key) {
       setResponse(result.key);
     }
@@ -34,7 +35,7 @@ export default function Home() {
     if (response == "key") {
       router.push("/home");
     }
-  }, [router]);
+  }, [response]);
 
   return (
     <div className="bg-gradient-to-br from-blue-500 to-blue-900 h-screen grid items-center justify-center grid-rows-6">

@@ -1,13 +1,12 @@
+import { ProductsAction } from "@/actions/products";
 import Price from "@/components/Price";
 import { Product } from "@/types/Product";
-import axios from "axios";
+import { cookies } from "next/headers";
 import Image from "next/image";
 
 export default async function Home() {
 
-    const BASE_URL = "http://smartshopper-scraping-gateway:5000";
-    const response = await axios.get(BASE_URL + "/");
-    const products: Product[] = response.data["products"];
+    const products: Product[] = await ProductsAction();
 
     return (
         <>
@@ -15,7 +14,7 @@ export default async function Home() {
                 <p>Smartshopper</p>
             </header>
             <main className="pt-5 ps-5 text-black">
-                <ul className="grid grid-flow-col cols overflow-x-auto gap-4">{products.map((product, index: number) => 
+                {/* <ul className="grid grid-flow-col cols overflow-x-auto gap-4">{products.map((product, index: number) => 
                     <li className="relative" key={index}>
                         <div className="bg-blue-500 p-5 w-60 rounded-t-lg">
                             <Image src={product.image}
@@ -28,7 +27,7 @@ export default async function Home() {
                         </div>
                         <Price prices={product.prices} target_price={product.target_price} />
                     </li>
-                )}</ul>
+                )}</ul> */}
             </main>
             <footer className="bg-blue-500 text-white">
 

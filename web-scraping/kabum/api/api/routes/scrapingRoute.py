@@ -10,7 +10,6 @@ from flask_cors import cross_origin
 
 from bs4 import BeautifulSoup
 import requests
-import pprint
 import json
 from typing import List
 
@@ -26,19 +25,24 @@ headers = {
 def scraping(products: List[str]):
     
     prices = {}
-    for product_name in products:
-        product_name = product_name.replace(" ", "-")
+    for product in products:
+        product_name = product["name"]
         response = requests.get(f"https://www.kabum.com.br/busca/{product_name}", headers=headers)
-
         soup = BeautifulSoup(response.content, "html.parser")
 
         # get the json to the products
         page_json = json.loads(soup.find(id="__NEXT_DATA__").text)
         item: dict = page_json["props"]["pageProps"]["data"]["catalogServer"]["data"][0]
-
         in_offer = item.get("offer")
         price = item["priceWithDiscount"] if in_offer is None else item["offer"]["priceWithDiscount"]
         prices[product_name] = price
+        
+        data = [{
+            "product_id": product["id"],
+            "store_id": 1,
+            "price": price
+        }]
+        requests.post("http://history-register:5000/", json=data)
     
     return prices
 
@@ -50,6 +54,7 @@ def get_prices():
     if request.method == "GET":
         try:
             data = request.get_json()[0]
+            print(data)
             products = data["products"]
             
             prices = scraping(products)

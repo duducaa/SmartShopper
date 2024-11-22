@@ -26,7 +26,7 @@ def login():
             
             if user.password == data["password"]:
                 key = "key"
-                return json.dumps({"key": key}), 200
+                return json.dumps({"key": key, "user_id": Users.id}), 200
             else:
                 return json.dumps({"Message": "Wrong email or password"}), 401
             

@@ -44,6 +44,21 @@ services:
       smartshopper-network:
         ipv4_address: 172.168.200.7
 
+  history-register:
+    container_name: history-register
+    build:
+      context: ./history-register
+      dockerfile: Dockerfile
+    ports:
+      - 5110:5000
+    volumes:
+      - ./history-register/api:/api
+    stdin_open: true
+    tty: true
+    networks:
+      smartshopper-network:
+        ipv4_address: 172.168.200.11
+
   web-scraping-gateway:
     container_name: smartshopper-scraping-gateway
     build:
@@ -91,7 +106,7 @@ services:
     ports:
       - 5100:5000
     volumes:
-      - ./user-actions:/api
+      - ./user-actions/api:/api
     stdin_open: true
     tty: true
     networks:
