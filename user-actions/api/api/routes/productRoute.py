@@ -29,6 +29,7 @@ def get_products():
             return json.dumps({"products": product_list}), 200
             
         except Exception as err:
+            print(err)
             return json.dumps({"Error": f"{err}"}), 501
     else:
         return "Wrong request method. Only POST allowed", 405

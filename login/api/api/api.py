@@ -24,13 +24,19 @@ def login():
             
             user = Users.select().where(Users.email == data["email"]).first()
             
+            if user is None:
+                return json.dumps({"Message": "Wrong email or password"}), 401
+            
             if user.password == data["password"]:
                 key = "key"
-                return json.dumps({"key": key, "user_id": Users.id}), 200
+                
+                result = {"key": key, "user_id": user.id}
+                return json.dumps(result), 200
             else:
                 return json.dumps({"Message": "Wrong email or password"}), 401
             
         except Exception as err:
+            print(err)
             return json.dumps({"Error": f"{err}"}), 501
     else:
         return "Wrong request method. Only POST allowed", 405

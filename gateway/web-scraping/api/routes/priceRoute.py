@@ -16,10 +16,8 @@ def get_products():
     if request.method == "GET":
         try:
             data = request.get_json()[0]
-            stores = data["stores"]
             products = data["products"]
-            print(products)
-            print(stores)
+            stores = data["stores"]
             
             prices = {product["name"]: {} for product in products}
             for store in stores:
@@ -34,6 +32,7 @@ def get_products():
             return json.dumps({"prices": prices}), 200
             
         except Exception as err:
+            print(err)
             return json.dumps({"Error": f"{err}"}), 501
     else:
         return "Wrong request method. Only GET allowed", 405

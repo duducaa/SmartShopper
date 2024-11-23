@@ -13,4 +13,4 @@ RUN apt update && apt install wget -y && \
 
 RUN pip install -r requirements.txt
 
-CMD [ "/bin/bash" ]
+CMD [ "python", "api/api.py" ]

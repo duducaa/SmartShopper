@@ -20,7 +20,6 @@ def login():
     if request.method == "POST":
         try:
             data = request.get_json()[0]
-            print(data)
             
             History.create(
                 product_id = data["product_id"] ,
@@ -31,7 +30,6 @@ def login():
             return json.dumps({"Message": "Price registered!!!"}), 200
             
         except Exception as err:
-            print(err)
             return json.dumps({"Error": f"{err}"}), 501
     else:
         return "Wrong request method. Only POST allowed", 405

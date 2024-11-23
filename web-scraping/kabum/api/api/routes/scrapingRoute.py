@@ -54,7 +54,6 @@ def get_prices():
     if request.method == "GET":
         try:
             data = request.get_json()[0]
-            print(data)
             products = data["products"]
             
             prices = scraping(products)

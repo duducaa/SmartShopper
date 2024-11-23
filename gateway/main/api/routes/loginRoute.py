@@ -11,13 +11,14 @@ def login():
     if request.method == "POST":
         try:
             data = request.get_json()
+            print(data)
             response = req.post("http://smartshopper-login:5000/", json=data)
-            print(response.json())
-            key = response.json()["key"]
+            result = response.json()
             
-            
-            if response.status_code == 200 and key != "":
-                return json.dumps({"key": key}), 200
+            if response.status_code == 200 and result["key"] != "":
+                return json.dumps(result), 200
+            else:
+                return json.dumps({"Message": "Wrong credentials"}), 501
             
         except Exception as err:
             print(err)

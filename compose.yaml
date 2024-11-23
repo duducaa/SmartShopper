@@ -75,10 +75,6 @@ services:
     networks:
       smartshopper-network:
         ipv4_address: 172.168.200.6
-    depends_on:
-      - kabum-web-scraping
-      - mercado-livre-web-scraping
-      - terabyte-web-scraping
 
   smartshopper-database:
     container_name: smartshopper-smartshopper-database
@@ -144,25 +140,18 @@ services:
     networks:
       smartshopper-network:
         ipv4_address: 172.168.200.3
-    depends_on:
-      - login
-      - web-scraping-gateway
-      - smartshopper-database
-      - user-actions
   
   interface:
     container_name: smartshopper-interface
     build:
-      context: ./front-end
+      context: ./interface
       dockerfile: Dockerfile
     ports:
         - 5020:3000
     volumes:
-        - ./front-end/app:/app
+        - ./interface/app:/app
     stdin_open: true
     tty: true
-    depends_on:
-      - gateway
     networks:
       smartshopper-network:
         ipv4_address: 172.168.200.2
