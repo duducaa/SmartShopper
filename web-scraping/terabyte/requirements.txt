@@ -1,7 +1,0 @@
-flask
-flask_cors
-requests
-peewee
-selenium
-webdriver-manager
-bs4
